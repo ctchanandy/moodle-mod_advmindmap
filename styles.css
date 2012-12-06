@@ -1,0 +1,11 @@
+table.advmindmap_help_table {
+    border: 1px solid black;
+    width: 95%;
+}
+
+table.advmindmap_help_table th, table.advmindmap_help_table td {
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    padding: 5px;
+    vertical-align: top;
+}
