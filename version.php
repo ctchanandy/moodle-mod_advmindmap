@@ -31,4 +31,5 @@ $module->requires  = 2011112900;       // Requires this Moodle version
 $module->component = 'mod_advmindmap'; // Full name of the plugin (used for diagnostics)
 $module->cron      = 0;                // Period for cron to check this module (secs)
 
+$module->release   = "2012091100"; // User-friendly version number
 ?>

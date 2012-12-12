@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * advmindmap module upgrade
+ * advmindmap module capabilities
  *
  * @package    mod
  * @subpackage mindmap
