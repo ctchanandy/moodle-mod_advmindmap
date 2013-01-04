@@ -321,11 +321,15 @@ function advmindmap_scale_used ($newmoduleid,$scaleid) {
  * @return boolean True if the scale is used by any newmodule
  */
 function advmindmap_scale_used_anywhere($scaleid) {
-    if ($scaleid and record_exists('newmodule', 'grade', -$scaleid)) {
+    global $DB;
+    /*
+    if ($scaleid and $DB->record_exists('advmindmap', array('grade'=>-$scaleid))) {
         return true;
     } else {
         return false;
     }
+    */
+    return false;
 }
 
 /**
