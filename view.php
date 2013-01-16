@@ -116,7 +116,7 @@ if (!has_capability('mod/advmindmap:givecomment', $context)) { // not teacher
         $query_params = array('advno'=>$advmindmap->id);
         list($in_sql, $in_params) = $DB->get_in_or_equal($usergroups, SQL_PARAMS_NAMED);
         $params = array_merge($in_params, $query_params);
-        $advmindmap_instances = $DB->get_records_select("advmindmap_instances", "advno = :advno AND groupid $in_sql");
+        $advmindmap_instances = $DB->get_records_select("advmindmap_instances", "advno = :advno AND groupid $in_sql", $params);
         if (!$advmindmap_instances) {
             // create an mind map instance for each group the user is in
             foreach ($usergroups as $ug) {
