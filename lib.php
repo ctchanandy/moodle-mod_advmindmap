@@ -43,6 +43,7 @@ function advmindmap_add_instance($advmindmap) {
     } else {
         $advmindmap->editable = '0';
     }
+    // Default mindmap: one "Moodle" node in the center
     $advmindmap->xmldata = '
 <MindMap>		
  <MM>

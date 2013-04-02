@@ -60,7 +60,7 @@ if ($id) {
 require_course_login($course, true, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-add_to_log($course->id, "advmindmap", "view", "view.php?id={$cm->id}", $advmindmap->id, $cm->id);
+add_to_log($course->id, "advmindmap", "view", "view.php?id=".$cm->id, $advmindmap->id, $cm->id);
 
 $url = new moodle_url('/mod/advmindmap/view.php');
 $url->param('id', $id);
@@ -73,7 +73,7 @@ $PAGE->set_url($url);
 $PAGE->set_pagelayout('incourse');
 $PAGE->set_context($context);
 
-// check group mode and get groups
+// check course module group mode and get groups
 $groupmode = groups_get_activity_groupmode($cm, $course);
 if ($groupmode) {
     // get all group mind maps
@@ -97,7 +97,7 @@ if ($groupmode) {
             }
         }
         
-        // if user is not in any group and cannot view other people mind map, cannot view anything
+        // if user is not in any group and cannot view other people mind map = they cannot view anything
         if (empty($usergroups) && !has_capability('mod/advmindmap:viewother', $context)) {
             print_error('errornotingroup', 'advmindmap');
         }
@@ -107,8 +107,10 @@ if ($groupmode) {
     }
 }
 
+// Initially user cannot see anything before permission checking
 $canedit = false;
-// check if any maps for user, if not, add one for them
+
+// Preparation: check if any mindmaps for current user, if not, add one for them
 if (!has_capability('mod/advmindmap:givecomment', $context)) { // not teacher
     if ($groupmode) { // group mind map
         // A user may in multiple groups
@@ -124,6 +126,7 @@ if (!has_capability('mod/advmindmap:givecomment', $context)) { // not teacher
                 $advmindmap_instance->groupid = $ug;
                 $advmindmap_instance->id = $DB->insert_record("advmindmap_instances", $advmindmap_instance);
             }
+            // mindmap created, let's reload
             header('Location: view.php?id='.$id);
         }
         // if user want to see other group, check the permission
@@ -144,6 +147,7 @@ if (!has_capability('mod/advmindmap:givecomment', $context)) { // not teacher
             $advmindmap_instance = advmindmap_set_new_instance($advmindmap);
             $advmindmap_instance->userid = $USER->id;
             $advmindmap_instance->id = $DB->insert_record("advmindmap_instances", $advmindmap_instance);
+            // mindmap created, let's reload
             header('Location: view.php?id='.$id);
         }
         if($viewuser) {
@@ -153,7 +157,7 @@ if (!has_capability('mod/advmindmap:givecomment', $context)) { // not teacher
             $advmindmap_instance = $DB->get_record("advmindmap_instances", array("advno"=>$cm->instance, "id"=>$viewuser));
         }
     }
-} else { //teacher or overrided permission
+} else { // teacher or overrided permission
     if ($groupmode && $viewgroup) { // group mind map, view other mind map
         if (!$advmindmap_instance = $DB->get_record("advmindmap_instances", array("id"=>$viewgroup))) {
             print_error("The selected group have no mindmaps");
@@ -167,6 +171,7 @@ if (!has_capability('mod/advmindmap:givecomment', $context)) { // not teacher
             $advmindmap_instance = advmindmap_set_new_instance($advmindmap);
             $advmindmap_instance->userid = $USER->id;
             $advmindmap_instance->id = $DB->insert_record("advmindmap_instances", $advmindmap_instance);
+            // mindmap created, let's reload
             header('Location: view.php?id='.$id);
         }
     }
@@ -194,6 +199,7 @@ if ($advmindmap->editable == '0') {
     echo html_writer::tag('p', get_string('uneditable', 'advmindmap'), array('style', 'color:red;font-weight:bold;'));
 }
 
+// Check if user have permission to edit mindmap, display a message if viewing others' mindmap
 if ($groupmode) {
     if (!has_capability('mod/advmindmap:givecomment', $context)) {
         if (!$viewgroup) {
@@ -245,7 +251,7 @@ if (isset($advmindmap_instance)) {
     echo "<p>".get_string('lastupdated', 'advmindmap').date("Y-n-j H:i", $advmindmap_instance->timemodified?$advmindmap_instance->timemodified:$advmindmap_instance->timecreated)."</p>";
 }
 
-// Locking
+// Locking: user can still occupy the mindmap forever if they reload the page
 $islocked = false;
 if ($groupmode && $canedit && !has_capability('mod/advmindmap:givecomment', $context)) {
     $locktime = 3600; // 1 hour
@@ -270,7 +276,7 @@ if ($groupmode && $canedit && !has_capability('mod/advmindmap:givecomment', $con
     
 echo $OUTPUT->box_end();
 
-// Construct unique link
+// Construct a unique link for copying
 $uniquelink = $CFG->wwwroot."/mod/advmindmap/view.php?id=$id";
 if ($viewuser) $uniquelink .= "&viewuser=$viewuser";
 else if ($viewgroup) $uniquelink .= "&viewgroup=$viewgroup";
@@ -280,19 +286,18 @@ else if (isset($advmindmap_instance)) {
     else $uniquelink .= "&viewuser=".$advmindmap_instance->id;
 }
 ?>
-<div id="flashcontent" style="margin:0 auto; padding:0px; text-align:center; border:1px black solid; width:820px;">
-</div>
-<?php if (isset($advmindmap_instance)) { ?>
+<div id="flashcontent"></div>
+<?php if (isset($advmindmap_instance)) { // Display link for copying and help icon ?>
 <div style="width:85%; margin:5px auto; font-size:0.8em;">
     <?php echo get_string('uniquelink', 'advmindmap'); ?>: <input type="text" id="uniquelink" onclick="selectAll('uniquelink');" style="width:500px;" value="<?php echo $uniquelink; ?>" /> 
     <?php echo get_string('copylink', 'advmindmap'); ?>
     <div style="float:right;">
-   <?php
-   echo '<span class="helplink">';
-   echo $OUTPUT->help_icon('detail', 'advmindmap');
-   echo '</span>';
-   ?>
-   </div>
+    <?php
+        echo '<span class="helplink">';
+        echo $OUTPUT->help_icon('detail', 'advmindmap');
+        echo '</span>';
+    ?>
+    </div>
 </div>
 <?php } ?>
 <script type="text/javascript" src="./swfobject.js"></script>
@@ -308,7 +313,7 @@ else if (isset($advmindmap_instance)) {
     }
     
     var so = new SWFObject("./viewer.swf", "viewer", 800, 600, "9", "#FFFFFF");
-    <?php if(! $viewuser){ ?>
+    <?php if(! $viewuser) { ?>
     so.addVariable("load_url", "./xml.php?id=<?php echo $advmindmap_instance->id;?>");		
     <?php } else { ?>
     so.addVariable("load_url", "./xml.php?id=<?php echo $viewuser;?>");		
@@ -508,4 +513,3 @@ if (has_capability('mod/advmindmap:viewother', $context)) {
 }
 
 echo $OUTPUT->footer($course);
-?>

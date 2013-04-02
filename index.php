@@ -77,10 +77,10 @@ $currentsection = '';
 foreach ($advmindmaps as $advmindmap) {
     if (!$advmindmap->visible) {
         //Show dimmed if the mod is hidden
-        $link = "<a class=\"dimmed\" href=\"view.php?id=$advmindmap->coursemodule\">".format_string($advmindmap->name,true)."</a>";
+        $link = html_writer::link('view.php?id='.$advmindmap->coursemodule, format_string($advmindmap->name,true), array('class'=>'dimmed'));
     } else {
         //Show normal if the mod is visible
-        $link = "<a href=\"view.php?id=$advmindmap->coursemodule\">".format_string($advmindmap->name,true)."</a>";
+        $link = html_writer::link('view.php?id='.$advmindmap->coursemodule, format_string($advmindmap->name,true));
     }
     $printsection = '';
     if ($advmindmap->section !== $currentsection) {
@@ -102,5 +102,4 @@ foreach ($advmindmaps as $advmindmap) {
 echo html_writer::table($table);
 
 /// Finish the page
-
 echo $OUTPUT->footer($course);

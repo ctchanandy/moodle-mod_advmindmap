@@ -9,3 +9,11 @@ table.advmindmap_help_table th, table.advmindmap_help_table td {
     padding: 5px;
     vertical-align: top;
 }
+
+div#flashcontent {
+    margin: 0 auto;
+    padding: 0px;
+    text-align: center;
+    border: 1px black solid;
+    width:820px;
+}
