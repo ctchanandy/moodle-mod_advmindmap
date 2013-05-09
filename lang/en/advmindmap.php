@@ -40,6 +40,12 @@ $string['detail_help'] = '<div class="indent">
 <p>(The Mindmap Module is originally developed by <a href="http://ekpenso.com">ekpenso.com</a>. It is then modified by <a href="http://www.cite.hku.hk">CITE</a>.)</p>
 </div>';
 
+// capabilities
+$string['advmindmap:givecomment'] = 'Give comment';
+$string['advmindmap:submit'] = 'Submit';
+$string['advmindmap:view'] = 'View';
+$string['advmindmap:viewother'] = 'View other';
+
 $string['advmindmapfieldset'] = 'Custom example fieldset';
 $string['advmindmapintro'] = 'Advance Mindmap Intro';
 $string['advmindmapname'] = 'Advance Mindmap Name';

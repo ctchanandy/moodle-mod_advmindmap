@@ -40,6 +40,11 @@ $string['detail_help'] = '<div class="indent">
 <p>(此腦圖模組由<a href="http://ekpenso.com">ekpenso.com</a>首先開發。其後<a href="http://www.cite.hku.hk">CITE</a>再作過修改)</p>
 </div>';
 
+// capabilities
+$string['advmindmap:givecomment'] = '給予評語';
+$string['advmindmap:submit'] = '遞交';
+$string['advmindmap:view'] = '檢視';
+$string['advmindmap:viewother'] = '檢視其他';
 
 $string['advmindmapfieldset'] = 'Custom example fieldset';
 $string['advmindmapintro'] = '進階腦圖描述';
