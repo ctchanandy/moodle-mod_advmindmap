@@ -102,4 +102,5 @@ foreach ($advmindmaps as $advmindmap) {
 echo html_writer::table($table);
 
 /// Finish the page
+
 echo $OUTPUT->footer($course);

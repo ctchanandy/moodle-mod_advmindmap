@@ -63,6 +63,6 @@ if($xml && $advmindmap->editable == '1') {
         echo "update failed";
     }
 } else {
-    echo "update failed";
+    echo "fail";
 }
 ?>
