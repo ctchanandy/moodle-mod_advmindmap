@@ -35,7 +35,7 @@ class restore_advmindmap_activity_structure_step extends restore_activity_struct
         $paths[] = new restore_path_element('advmindmap', '/activity/advmindmap');
         
         if ($userinfo) {
-            $paths[] = new restore_path_element('advmindmap_instance', '/activity/advmindmap/advmindmap_instances/advmindmap_instance');
+            $paths[] = new restore_path_element('advmindmap_instance', '/activity/advmindmap/instances/advmindmap_instance');
         }
         
         // Return the paths wrapped into standard activity structure
@@ -48,11 +48,6 @@ class restore_advmindmap_activity_structure_step extends restore_activity_struct
         $data = (object)$data;
         $oldid = $data->id;
         $data->course = $this->get_courseid();
-        
-        // check if advmindmap with same name exist, if yes, rename it
-        if ($DB->count_records('advmindmap', array('name'=>$data->name))) {
-            $data->name = $data->name.' copy';
-        }
         
         $data->timecreated = $this->apply_date_offset($data->timecreated);
         $data->timemodified = $this->apply_date_offset($data->timemodified);

@@ -1,6 +1,6 @@
 <?php
+$string['advmindmap:addinstance'] = 'Add an advance mindmap instance';
 $string['advmindmap'] = 'Advance Mindmap';
-
 $string['modulename'] = 'Advance Mindmap';
 $string['modulenameplural'] = 'Advance Mindmaps';
 $string['instances'] = 'Advance Mindmap Instances';

@@ -29,7 +29,10 @@ Q1: How do I add a child node in 2nd, 3rd, 4th...nth level?
 A1: First, select the node you want to add child node to, then click the "+" icon. You can also press the "Insert" button on your keyboard.
 
 Q2: How to prevent students from viewing others' mindmap?
-Q2: Override the permission of the activity: remove "View Other" from student role.
+A2: Override the permission of the activity: remove "View Other" from student role.
+
+Q3: I did not saw the mind map editor/ I only saw a blank page, how do I created a mind map?
+A3: Please make sure you have installed Adobe Flash Player.
 
 ==Links==
 You can also take a look at another fork of the mindmap module for Moodle 2.X by t6enis here

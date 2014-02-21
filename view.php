@@ -58,7 +58,7 @@ if ($id) {
 }
 
 require_course_login($course, true, $cm);
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 
 add_to_log($course->id, "advmindmap", "view", "view.php?id=".$cm->id, $advmindmap->id, $cm->id);
 
@@ -186,7 +186,7 @@ if ($advmindmap->numdummygroups > 0 && $viewdummy) {
 $stradvmindmaps = get_string("modulenameplural", "advmindmap");
 $stradvmindmap  = get_string("modulename", "advmindmap");
 
-$courseshortname = format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
+$courseshortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
 $title = $courseshortname . ': ' . format_string($advmindmap->name);
 
 $PAGE->set_title($title);
@@ -443,7 +443,7 @@ if (has_capability('mod/advmindmap:viewother', $context)) {
                 die;
             }
             // Get all students in the course
-            $context = get_context_instance(CONTEXT_COURSE, $course->id);
+            $context = context_course::instance($course->id);
             $params = array($context->id, 5);
             $sql = "SELECT u.id
                     FROM {role_assignments} AS a, {user} AS u 
