@@ -186,23 +186,16 @@ function advmindmap_update_user_instance($advmindmap_instance) {
  * $return->info = a short text description
  *
  * @return null
- * @todo Finish documenting this function
  **/
 function advmindmap_user_outline($course, $user, $mod, $advmindmap) {
     global $DB;
-    $params = array($user->id, 'advmindmap', 'view', $advmindmap->id);
-    if ($logs = $DB->get_records_select("log", "userid = ? AND module = ? AND action = ? AND info = ?", $params, "time ASC")) {
-        
-        $numviews = count($logs);
-        $lastlog = array_pop($logs);
-        
-        $result = new object();
-        $result->info = get_string("numviews", "", $numviews);
-        $result->time = $lastlog->time;
-        
+    $params = array('advno'=>$advmindmap->id, 'userid'=>$user->id);
+    if ($advmindmap_instance = $DB->get_record('advmindmap_instances', $params)) {
+        $result = new stdClass();
+        $result->info = get_string('lastupdated', 'advmindmap').userdate($advmindmap_instance->timemodified);
+        $result->time = $advmindmap_instance->timemodified;
         return $result;
     }
-    
     return null;
 }
 
@@ -211,24 +204,18 @@ function advmindmap_user_outline($course, $user, $mod, $advmindmap) {
  * a given particular instance of this module, for user activity reports.
  *
  * @return boolean
- * @todo Finish documenting this function
  **/
-function advmindmap_user_complete($course, $user, $mod, $newmodule) {
+function advmindmap_user_complete($course, $user, $mod, $advmindmap) {
     global $CFG, $DB;
-    $params = array($user->id, 'advmindmap', 'view', $newmodule->id);
-    if ($logs = $DB->get_records_select("log", "userid = ? AND module = ? AND action = ? AND info = ?", $params, "time ASC")) {
-        $numviews = count($logs);
-        $lastlog = array_pop($logs);
-        
-        $strmostrecently = get_string("mostrecently");
-        $strnumviews = get_string("numviews", "", $numviews);
-        
-        echo "$strnumviews - $strmostrecently ".userdate($lastlog->time);
+    $params = array('advno'=>$advmindmap->id, 'userid'=>$user->id);
+    if ($advmindmap_instance = $DB->get_record('advmindmap_instances', $params)) {
+        $result = new stdClass();
+        $result->info = get_string('lastupdated', 'advmindmap').userdate($advmindmap_instance->timemodified);
+        $result->time = $advmindmap_instance->timemodified;
+        echo get_string('lastupdated', 'advmindmap').userdate($advmindmap_instance->timemodified);
     } else {
-        print_string("neverseen", "resource");
+        print_string("notavailable", "advmindmap");
     }
-
-    return true;
 }
 
 /**
@@ -244,93 +231,6 @@ function advmindmap_print_recent_activity($course, $isteacher, $timestart) {
     global $CFG;
 
     return false;  //  True if anything was printed, otherwise false 
-}
-
-/**
- * Function to be run periodically according to the moodle cron
- * This function searches for things that need to be done, such 
- * as sending out mail, toggling flags etc ... 
- *
- * @uses $CFG
- * @return boolean
- * @todo Finish documenting this function
- **/
-function advmindmap_cron () {
-    global $CFG;
-
-    return true;
-}
-
-/**
- * Must return an array of grades for a given instance of this module, 
- * indexed by user.  It also returns a maximum allowed grade.
- * 
- * Example:
- *    $return->grades = array of grades;
- *    $return->maxgrade = maximum allowed grade;
- *
- *    return $return;
- *
- * @param int $newmoduleid ID of an instance of this module
- * @return mixed Null or object with an array of grades and with the maximum grade
- **/
-function advmindmap_grades($newmoduleid) {
-   return NULL;
-}
-
-/**
- * Must return an array of user records (all data) who are participants
- * for a given instance of newmodule. Must include every user involved
- * in the instance, independient of his role (student, teacher, admin...)
- * See other modules as example.
- *
- * @param int $newmoduleid ID of an instance of this module
- * @return mixed boolean/array of students
- **/
-function advmindmap_get_participants($newmoduleid) {
-    return false;
-}
-
-/**
- * This function returns if a scale is being used by one newmodule
- * it it has support for grading and scales. Commented code should be
- * modified if necessary. See forum, glossary or journal modules
- * as reference.
- *
- * @param int $newmoduleid ID of an instance of this module
- * @return mixed
- * @todo Finish documenting this function
- **/
-function advmindmap_scale_used ($newmoduleid,$scaleid) {
-    $return = false;
-
-    //$rec = get_record("newmodule","id","$newmoduleid","scale","-$scaleid");
-    //
-    //if (!empty($rec)  && !empty($scaleid)) {
-    //    $return = true;
-    //}
-   
-    return $return;
-}
-
-/**
- * Checks if scale is being used by any instance of newmodule.
- * This function was added in 1.9
- *
- * This is used to find out if scale used anywhere
- * @param $scaleid int
- * @return boolean True if the scale is used by any newmodule
- */
-function advmindmap_scale_used_anywhere($scaleid) {
-    global $DB;
-    /*
-    if ($scaleid and $DB->record_exists('advmindmap', array('grade'=>-$scaleid))) {
-        return true;
-    } else {
-        return false;
-    }
-    */
-    return false;
 }
 
 /**
@@ -388,6 +288,71 @@ function advmindmap_clear_access_record($instance) {
     return $DB->update_record("advmindmap_instances", $instance);
 }
 
+/**
+ * Implementation of the function for printing the form elements that control
+ * whether the course reset functionality affects the advmindmap.
+ *
+ * @param object $mform form passed by reference
+ */
+function advmindmap_reset_course_form_definition(&$mform) {
+    $mform->addElement('header', 'advmindmapheader', get_string('modulenameplural', 'advmindmap'));
+    $mform->addElement('advcheckbox', 'reset_advmindmap', get_string('removeresponses','advmindmap'));
+}
+
+/**
+ * Course reset form defaults.
+ *
+ * @return array
+ */
+function advmindmap_reset_course_form_defaults($course) {
+    return array('reset_advmindmap'=>1);
+}
+
+/**
+ * Actual implementation of the reset course functionality, delete all the
+ * advmindmap instances for course $data->courseid.
+ *
+ * @global object
+ * @global object
+ * @param object $data the data submitted from the reset course.
+ * @return array status array
+ */
+function advmindmap_reset_userdata($data) {
+    global $CFG, $DB;
+
+    $componentstr = get_string('modulenameplural', 'advmindmap');
+    $status = array();
+
+    if (!empty($data->reset_advmindmap)) {
+        $advmindmapssql = "SELECT ad.id
+                           FROM {advmindmap} ad
+                           WHERE ad.course=?";
+        $params = array($data->courseid);
+        
+        $DB->delete_records_select('advmindmap_instances', "advno IN ($advmindmapssql)", $params);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('removeinstances', 'advmindmap'), 'error'=>false);
+    }
+
+    /// updating dates - shift may be negative too
+    /*
+    if ($data->timeshift) {
+        shift_course_mod_dates('advmindmap', array(''), $data->timeshift, $data->courseid);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
+    }
+    */
+
+    return $status;
+}
+
+/**
+ * Returns all other caps used in module
+ *
+ * @return array
+ */
+function advmindmap_get_extra_capabilities() {
+    return array('moodle/site:accessallgroups');
+}
+
 function advmindmap_supports($feature) {
     switch($feature) {
         case FEATURE_GROUPS:                  return true;
@@ -406,4 +371,13 @@ function advmindmap_supports($feature) {
     }
 }
 
-?>
+/**
+ * Return a list of page types
+ * @param string $pagetype current page type
+ * @param stdClass $parentcontext Block's parent context
+ * @param stdClass $currentcontext Current context of block
+ */
+function advmindmap_page_type_list($pagetype, $parentcontext, $currentcontext) {
+    $module_pagetype = array('mod-advmindmap-*'=>get_string('page-mod-advmindmap-x', 'advmindmap'));
+    return $module_pagetype;
+}

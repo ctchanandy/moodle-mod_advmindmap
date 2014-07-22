@@ -60,7 +60,19 @@ if ($id) {
 require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 
-add_to_log($course->id, "advmindmap", "view", "view.php?id=".$cm->id, $advmindmap->id, $cm->id);
+//add_to_log($course->id, "advmindmap", "view", "view.php?id=".$cm->id, $advmindmap->id, $cm->id);
+
+$eventdata = array();
+$eventdata['objectid'] = $advmindmap->id;
+$eventdata['context'] = $context;
+$eventdata['courseid'] = $course->id;
+$eventdata['other'] = array("content" => "advmindmapactivityview", "group"=>$group, "viewuser"=>$viewuser, "viewgroup"=>$viewgroup, "viewdummy"=>$viewdummy);
+
+$event = \mod_advmindmap\event\course_module_viewed::create($eventdata);
+$event->add_record_snapshot('course', $course);
+$event->add_record_snapshot('advmindmap', $advmindmap);
+$event->add_record_snapshot('course_modules', $cm);
+$event->trigger();
 
 $url = new moodle_url('/mod/advmindmap/view.php');
 $url->param('id', $id);

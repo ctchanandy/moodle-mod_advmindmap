@@ -27,7 +27,7 @@
 require_once("../../config.php");
 require_once("lib.php");
 
-$id = required_param('id', PARAM_INT);   // course id
+$id = required_param('id', PARAM_INT);   // id: course id
 
 if (! $course = $DB->get_record("course", array("id"=>$id))) {
     print_error('invalidcourseid');
@@ -35,7 +35,15 @@ if (! $course = $DB->get_record("course", array("id"=>$id))) {
 
 require_course_login($course);
 
-add_to_log($course->id, "advmindmap", "view all", "index.php?id=$course->id", "");
+// Legacy logging function call
+//add_to_log($course->id, "advmindmap", "view all", "index.php?id=$course->id", "");
+
+$params = array(
+    'context' => context_course::instance($id)
+);
+$event = \mod_advmindmap\event\course_module_instances_list_viewed::create($params);
+$event->add_record_snapshot('course', $course);
+$event->trigger();
 
 /// Get all required strings
 $strsectionname = get_string('sectionname', 'format_'.$course->format);
@@ -47,7 +55,7 @@ $PAGE->set_pagelayout('incourse');
 $PAGE->navbar->add($stradvmindmaps);
 $PAGE->set_title($stradvmindmaps);
 echo $OUTPUT->header();
-    
+
 /// Get all the appropriate data
 if (! $advmindmaps = get_all_instances_in_course('advmindmap', $course)) {
     notice(get_string('thereareno', 'moodle', $stradvmindmaps), "../../course/view.php?id=$course->id");
@@ -102,5 +110,4 @@ foreach ($advmindmaps as $advmindmap) {
 echo html_writer::table($table);
 
 /// Finish the page
-
 echo $OUTPUT->footer($course);

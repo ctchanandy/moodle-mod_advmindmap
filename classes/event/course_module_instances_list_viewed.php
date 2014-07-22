@@ -1,5 +1,5 @@
 <?php
-// This file is part of Mindmap module for Moodle - http://moodle.org/
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,21 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * advmindmap module version info
+ * mod_advmindmap instances list viewed event.
  *
- * @package    mod
- * @subpackage mindmap
- * @author ekpenso.com
- * @copyright  2012 Andy Chan <ctchan.andy@gmail.com>
+ * @package    mod_advmindmap
+ * @copyright  2014 Andy Chan
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod_advmindmap\event;
 defined('MOODLE_INTERNAL') || die();
 
-$module->version   = 2014062403;       // The current module version (Date: YYYYMMDDXX)
-$module->requires  = 2013040500;       // Requires this Moodle version
-$module->component = 'mod_advmindmap'; // Full name of the plugin (used for diagnostics)
-$module->cron      = 0;                // Period for cron to check this module (secs)
-
-$module->release   = "2014062402"; // User-friendly version number
-$module->maturity = "MATURITY_ALPHA";
+/**
+ * mod_advmindmap instances list viewed event class.
+ *
+ * @package    mod_advmindmap
+ * @copyright  2014 Andy Chan
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class course_module_instance_list_viewed extends \core\event\course_module_instances_list_viewed {
+}

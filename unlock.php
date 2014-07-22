@@ -45,7 +45,29 @@ if (! $advmindmap_instance = $DB->get_record("advmindmap_instances", array("id"=
 
 require_login($course->id);
 
-add_to_log($course->id, "advmindmap", "unlock", "unlock.php?id=$id&instanceid=$instanceid", $advmindmap->id, $cm->id);
+//add_to_log($course->id, "advmindmap", "unlock", "unlock.php?id=$id&instanceid=$instanceid", $advmindmap->id, $cm->id);
+
+// constructing URL for event
+$viewuser = 0;
+$viewgroup = 0;
+$viewdummy = 0;
+$groupmode = groups_get_activity_groupmode($cm, $course);
+if ($groupmode) {
+    $viewgroup = $id;
+} else if (!$groupmode && !$advmindmap->numdummygroups) {
+    $viewuser = $id;
+} else if (!$advmindmap->numdummygroups > 0) {
+    $viewdummy = $id;
+}
+
+$event = \mod_advmindmap\event\mindmap_unlocked::create(array(
+    'objectid' => $cm->id,
+    'courseid' => $course->id,
+    'context' => context_module::instance($cm->id),
+    'other' => array("viewuser"=>$viewuser, "viewgroup"=>$viewgroup, "viewdummy"=>$viewdummy)
+));
+$event->add_record_snapshot('advmindmap_instances', $advmindmap_instances);
+$event->trigger();
 
 if (advmindmap_clear_access_record($advmindmap_instance)) {
     $coursepage = $CFG->wwwroot.'/course/view.php?id='.$course->id;

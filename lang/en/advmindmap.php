@@ -85,4 +85,9 @@ $string['errorcannotviewusermindmap'] = 'You have no permission to view other us
 $string['errorinvalidauthor'] = 'Mindmap author is not a valid user.';
 $string['errornostudentincourse'] = 'No students in the course.';
 $string['errornouseringroup'] = 'No users are in this group.';
-?>
+$string['removeinstances'] = 'Remove all mindmap instances';
+
+// event names
+$string['event_mindmap_updated'] = 'A mindmap has been updated.';
+$string['event_mindmap_unlocked'] = 'A mindmap has been unlocked.';
+$string['advmindmap_viewed'] = 'Advmindmap viewed';

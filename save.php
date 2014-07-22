@@ -27,7 +27,7 @@
 require_once("../../config.php");
 require_once("lib.php");
 
-$id = optional_param('id', 0, PARAM_INT); // Course Module ID
+$id = optional_param('id', 0, PARAM_INT); // advmindmap instance ID
 $xml = optional_param('mindmap', '', PARAM_RAW); 
 
 if ($id) {
@@ -47,7 +47,30 @@ if ($id) {
 
 require_login($advmindmap->course);
 
-add_to_log($course->id, "advmindmap", "update instance", "save.php?id=$id", $advmindmap->id, $cm->id);
+//add_to_log($course->id, "advmindmap", "update instance", "save.php?id=$id", $advmindmap->id, $cm->id);
+
+// constructing URL for event
+$viewuser = 0;
+$viewgroup = 0;
+$viewdummy = 0;
+$groupmode = groups_get_activity_groupmode($cm, $course);
+if ($groupmode) {
+    $viewgroup = $id;
+} else if (!$groupmode && !$advmindmap->numdummygroups) {
+    $viewuser = $id;
+    if ($viewuser == $USER->id) $viewuser = 0;
+} else if (!$advmindmap->numdummygroups > 0) {
+    $viewdummy = $id;
+}
+
+$event = \mod_advmindmap\event\mindmap_updated::create(array(
+    'objectid' => $cm->id,
+    'courseid' => $course->id,
+    'context' => context_module::instance($cm->id),
+    'other' => array("viewuser"=>$viewuser, "viewgroup"=>$viewgroup, "viewdummy"=>$viewdummy)
+));
+$event->add_record_snapshot('advmindmap_instances', $advmindmap_instances);
+$event->trigger();
 
 if($xml && $advmindmap->editable == '1') {
     if(get_magic_quotes_gpc()) {
