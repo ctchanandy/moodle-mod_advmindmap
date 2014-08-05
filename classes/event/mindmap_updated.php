@@ -81,7 +81,7 @@ class mindmap_updated extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_mindmap_updated', 'mod_advmindmap');
+        return get_string('eventmindmapupdated', 'mod_advmindmap');
     }
 
     /**

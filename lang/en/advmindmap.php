@@ -88,6 +88,5 @@ $string['errornouseringroup'] = 'No users are in this group.';
 $string['removeinstances'] = 'Remove all mindmap instances';
 
 // event names
-$string['event_mindmap_updated'] = 'A mindmap has been updated.';
-$string['event_mindmap_unlocked'] = 'A mindmap has been unlocked.';
-$string['advmindmap_viewed'] = 'Advmindmap viewed';
+$string['eventmindmapupdated'] = 'A mindmap has been updated.';
+$string['eventmindmapunlocked'] = 'A mindmap has been unlocked.';
