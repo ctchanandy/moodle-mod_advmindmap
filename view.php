@@ -256,7 +256,8 @@ if ($groupmode) {
 }
 
 if (!empty($advmindmap->intro)) {
-    echo "<p>".get_string('description').": ".$advmindmap->intro."</p>";
+    // Issue #7: suggestion by rabser
+    echo $OUTPUT->box(format_module_intro('advmindmap', $advmindmap, $cm->id), 'generalbox', 'intro');
 }
 
 if (isset($advmindmap_instance)) {
@@ -454,19 +455,16 @@ if (has_capability('mod/advmindmap:viewother', $context)) {
                 echo $OUTPUT->footer();
                 die;
             }
-            // Get all students in the course
+            // Issue #6: suggestion by rabser
+            // Get all students in the course able to view mindmaps
             $context = context_course::instance($course->id);
-            $params = array($context->id, 5);
-            $sql = "SELECT u.id
-                    FROM {role_assignments} AS a, {user} AS u 
-                    WHERE contextid = ? AND roleid = ? AND a.userid = u.id
-                    ORDER BY u.lastname ASC";
-            if ($students = $DB->get_records_sql($sql, $params)) {
+            $students = get_enrolled_users($context);
+            if (count($students) > 0) {
                 $students = array_keys($students);
             } else {
-                print_error('errornostudentincourse', 'advmindmap');
+                notice(get_string('errornostudentincourse', 'advmindmap'));
                 echo $OUTPUT->footer();
-                exit;
+                die;
             }
             
             // DIRTY HACK: create a temp course object just to generate this menu
