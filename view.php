@@ -128,7 +128,11 @@ if (!has_capability('mod/advmindmap:givecomment', $context)) { // not teacher
         // A user may in multiple groups
         $params = array();
         $query_params = array('advno'=>$advmindmap->id);
-        list($in_sql, $in_params) = $DB->get_in_or_equal($usergroups, SQL_PARAMS_NAMED);
+        if (!empty($usergroups)) {
+        	list($in_sql, $in_params) = $DB->get_in_or_equal($usergroups, SQL_PARAMS_NAMED);
+        } else {
+            print_error('errornotingroup', 'advmindmap');
+        }
         $params = array_merge($in_params, $query_params);
         $advmindmap_instances = $DB->get_records_select("advmindmap_instances", "advno = :advno AND groupid $in_sql", $params);
         if (!$advmindmap_instances) {
@@ -277,12 +281,12 @@ if ($groupmode && $canedit && !has_capability('mod/advmindmap:givecomment', $con
             $islocked = true;
             $canedit = false;
             $editinguser = $DB->get_record('user', array('id'=>$advmindmap_instance->useraccessed));
-            echo "<p style='color:red;'><img src='".$CFG->themewww."/".current_theme()."/pix/i/lock.gif'/> ".get_string('editingbyuser', 'advmindmap', fullname($editinguser))."</p>";
+            echo "<p style='color:red;'><img src='". $PAGE->theme->name ."/pix/i/lock.gif'/> ".get_string('editingbyuser', 'advmindmap', fullname($editinguser))."</p>";
             echo "<p style='color:red;'>".get_string('unlocktime', 'advmindmap')."<span id='countdown'></span></p>";
         }
     } else {
         advmindmap_add_access_record($advmindmap_instance);
-        echo "<p><img src='".$CFG->themewww."/".current_theme()."/pix/i/lock.gif'/> ".get_string('lockedbyyou', 'advmindmap');
+        echo "<p><img src='".$PAGE->theme->name."/pix/i/lock.gif'/> ".get_string('lockedbyyou', 'advmindmap');
         echo "<span style='font-weight:bold; font-size:2.0em;'>&rarr;<span> <input type='button' value='".get_string('unlockbutton', 'advmindmap')."' onclick='unlockmindmap()' /></p>";
     }
 }

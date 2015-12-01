@@ -26,10 +26,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2015043000;       // The current module version (Date: YYYYMMDDXX)
+$plugin->version   = 2015120100;       // The current module version (Date: YYYYMMDDXX)
 $plugin->requires  = 2013101800;       // Requires this Moodle version
 $plugin->component = 'mod_advmindmap'; // Full name of the plugin (used for diagnostics)
 $plugin->cron      = 0;                // Period for cron to check this module (secs)
 
-$plugin->release   = "2015043000"; // User-friendly version number
+$plugin->release   = "2015120100"; // User-friendly version number
 $plugin->maturity = "MATURITY_ALPHA";
