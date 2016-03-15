@@ -50,7 +50,7 @@ class mod_advmindmap_mod_form extends moodleform_mod {
         $mform->setDefault('editable', 1);
         
 		// add intro section
-        $this->add_intro_editor(true, get_string('advmindmapintro', 'advmindmap'));
+        $this->standard_intro_elements(get_string('advmindmapintro', 'advmindmap'));
         
         // add dummy groups settings
         $dummyoptions = array();
